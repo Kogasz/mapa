@@ -10,7 +10,15 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-var firstMarker = L.marker([52.18543184394124, 21.571585927415825]).addTo(map);
+var greenIcon = L.icon({
+    iconUrl: 'https://cdn0.iconfinder.com/data/icons/ui-3-1/512/address-512.png',
+
+    iconSize:     [40, 40], // size of the icon
+    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+    popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+});
+
+var firstMarker = L.marker([52.18543184394124, 21.571585927415825], {icon: greenIcon}).addTo(map);
 
 function onMapClicker(latlng) {
     var marker = L.marker(latlng).addTo(map);
@@ -31,7 +39,7 @@ map.on('click', function(e){
     onMapClick(e.latlng)
     onMapClicker(e.latlng)
     getData(e.latlng)
-    
+
 });
 
  async function getData(latlng){
@@ -47,15 +55,18 @@ map.on('click', function(e){
  console.log(json.address.county)
  }
  
- L.geoJSON(powiaty.features, {
-    onEachFeature: function(feature, layer) {
-        layer.on('mouseover', function(e) {
-            var name = feature.properties.nazwa;
-            layer.bindTooltip(name, {permanent:true}).openTooltip();
-        });
-        layer.on('mouseout', function(e) {
-            layer.unbindTooltip();
-        });
+for(let i=0;i<=powiaty.features.length-1;i++){
+    var powiat = powiaty.features[i]
+    var mapapowiat = L.geoJSON(powiat).addTo(map)
+    mapapowiat.bindTooltip(powiat.properties.nazwa)
+    if(powiat.properties.nazwa == "powiat miński"){
+        L.geoJSON(powiat, {color: "red"}).addTo(map)
     }
-}).addTo(map);
+    mapapowiat.on('click',function(){
+        mapapowiat.setStyle({
+            color:"red"
+        })
+    })
+}
+
 
