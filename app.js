@@ -30,20 +30,32 @@ map.on('click', function(e){
     console.log(e.latlng)
     onMapClick(e.latlng)
     onMapClicker(e.latlng)
+    getData(e.latlng)
     
 });
 
-// async function getData(latlng){
+ async function getData(latlng){
 
-// const lng = latlng.lng
-// const lat = latlng.lat 
+ const lng = latlng.lng
+ const lat = latlng.lat 
 
-// console.log(lat)
+ console.log(lat)
 
-// const data = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
-// const json = await data.json()
+ const data = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&namedetails=1`)
+ const json = await data.json()
 
-// console.log(json)
-// }
-
+ console.log(json.address.county)
+ }
+ 
+ L.geoJSON(powiaty.features, {
+    onEachFeature: function(feature, layer) {
+        layer.on('mouseover', function(e) {
+            var name = feature.properties.nazwa;
+            layer.bindTooltip(name, {permanent:true}).openTooltip();
+        });
+        layer.on('mouseout', function(e) {
+            layer.unbindTooltip();
+        });
+    }
+}).addTo(map);
 
